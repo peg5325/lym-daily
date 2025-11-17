@@ -18,7 +18,7 @@ cp application-local.yml.example application-local.yml
 ```yaml
 spring:
   datasource:
-    password: formom1234  # MySQL 비밀번호
+    password: your_mysql_password  # Docker MySQL 비밀번호 (docker-compose.yml 참고)
 
 naver:
   api:
