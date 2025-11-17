@@ -2,10 +2,14 @@ spring:
   application:
     name: formom-daily
 
+  # 로컬 개발 환경 설정 자동 로드
+  profiles:
+    include: local
+
   datasource:
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:formom}?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
     username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:formom1234}
+    password: ${DB_PASSWORD}  # application-local.yml에서 설정
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -31,18 +35,18 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
-# API Keys (from environment variables)
+# API Keys (application-local.yml에서 설정)
 naver:
   api:
-    client-id: ${NAVER_API_KEY:TQh1Q4MTNXgLS62k5tUU}
-    client-secret: ${NAVER_API_SECRET:euywXtaoXf}
+    client-id: ${NAVER_API_KEY}  # application-local.yml에서 설정
+    client-secret: ${NAVER_API_SECRET}  # application-local.yml에서 설정
   search:
     keyword: "임영웅"
     count: 10
 
 youtube:
   api:
-    key: ${YOUTUBE_API_KEY}
+    key: ${YOUTUBE_API_KEY}  # application-local.yml에서 설정
   channel:
     official:
       - "UCxxxxxxxxxxxxxxxx"  # 공식 채널 ID (추후 업데이트)
@@ -51,7 +55,7 @@ youtube:
 
 openai:
   api:
-    key: ${OPENAI_API_KEY}
+    key: ${OPENAI_API_KEY}  # application-local.yml에서 설정
   model: "gpt-3.5-turbo"
   max-tokens: 100
   temperature: 0.3

@@ -4,45 +4,47 @@ Spring Boot 기반 백엔드 서버
 
 ## 빌드 및 실행
 
-### 1. Gradle Wrapper 생성 (최초 1회)
+### 1. 로컬 설정 파일 생성
+
+민감한 정보(API 키, 비밀번호)는 Git에 커밋하지 않습니다.
 
 ```bash
-# Gradle이 설치되어 있다면
-gradle wrapper --gradle-version 7.6
-
-# 또는 IntelliJ IDEA에서 프로젝트를 열면 자동 생성됩니다
+cd backend/src/main/resources
+cp application-local.yml.example application-local.yml
 ```
 
-### 2. 환경 변수 설정
+`application-local.yml` 파일을 열어서 실제 값으로 수정:
 
-`.env` 파일을 backend 디렉토리에 생성하고 다음 내용을 입력하세요:
+```yaml
+spring:
+  datasource:
+    password: formom1234  # MySQL 비밀번호
 
-```env
-# Naver API
-NAVER_API_KEY=your_naver_client_id
-NAVER_API_SECRET=your_naver_client_secret
+naver:
+  api:
+    client-id: your_naver_client_id
+    client-secret: your_naver_client_secret
 
-# YouTube API
-YOUTUBE_API_KEY=your_youtube_api_key
+openai:
+  api:
+    key: your_openai_api_key  # Week 2에서 필요
 
-# OpenAI API
-OPENAI_API_KEY=your_openai_api_key
-
-# Database
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=formom
-DB_USERNAME=root
-DB_PASSWORD=your_password
+youtube:
+  api:
+    key: your_youtube_api_key  # Week 3에서 필요
 ```
 
-### 3. MySQL 데이터베이스 생성
+### 2. Docker로 MySQL 실행
 
-```sql
-CREATE DATABASE formom CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```bash
+# 프로젝트 루트 디렉토리에서
+docker-compose up -d
+
+# MySQL 컨테이너 상태 확인
+docker ps
 ```
 
-### 4. 빌드 및 실행
+### 3. 빌드 및 실행
 
 ```bash
 # 빌드
@@ -85,13 +87,13 @@ backend/
 
 ## 현재 구현 상태
 
-### Week 1 (진행 중)
+### Week 1 (완료)
 - ✅ Spring Boot 프로젝트 생성
 - ✅ 에이전트 패키지 구조 생성
-- ✅ MySQL 연결 설정
+- ✅ Docker MySQL 환경 구축
 - ✅ 데이터베이스 엔티티 (News, Media, Schedule)
 - ✅ NewsCollectorAgent 구현
-- 🚧 네이버 뉴스 API 연동 테스트 (API 키 필요)
+- ✅ 네이버 뉴스 API 연동 성공
 
 ### 다음 단계 (Week 2)
 - SummarizationAgent (OpenAI 연동)

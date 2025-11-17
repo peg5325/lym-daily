@@ -1,0 +1,20 @@
+# 로컬 개발 환경 설정 예시
+# 사용법: 이 파일을 application-local.yml로 복사하고 실제 값으로 채우세요
+# cp application-local.yml.example application-local.yml
+
+spring:
+  datasource:
+    password: your_mysql_password
+
+naver:
+  api:
+    client-id: your_naver_client_id
+    client-secret: your_naver_client_secret
+
+openai:
+  api:
+    key: your_openai_api_key
+
+youtube:
+  api:
+    key: your_youtube_api_key
