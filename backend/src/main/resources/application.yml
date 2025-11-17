@@ -3,9 +3,9 @@ spring:
     name: formom-daily
 
   datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:formom}?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:formom}?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
     username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:password}
+    password: ${DB_PASSWORD:formom1234}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -34,8 +34,8 @@ logging:
 # API Keys (from environment variables)
 naver:
   api:
-    client-id: ${NAVER_API_KEY}
-    client-secret: ${NAVER_API_SECRET}
+    client-id: ${NAVER_API_KEY:TQh1Q4MTNXgLS62k5tUU}
+    client-secret: ${NAVER_API_SECRET:euywXtaoXf}
   search:
     keyword: "임영웅"
     count: 10
