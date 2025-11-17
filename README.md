@@ -192,46 +192,57 @@ formom/
 
 ### 환경 변수 설정
 
-`.env` 파일 생성:
+`.env.example` 파일을 복사하여 `.env` 파일을 생성하고 실제 값으로 수정:
+
+```bash
+cp .env.example .env
+```
+
+`.env` 파일을 열어서 실제 API 키로 수정:
 ```env
+# Docker MySQL 설정
+MYSQL_ROOT_PASSWORD=your_mysql_password
+MYSQL_DATABASE=formom
+
 # Naver API
 NAVER_API_KEY=your_naver_client_id
 NAVER_API_SECRET=your_naver_client_secret
 
-# YouTube API
-YOUTUBE_API_KEY=your_youtube_api_key
-
 # OpenAI API
 OPENAI_API_KEY=your_openai_api_key
 
-# Database
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=formom
-DB_USERNAME=root
-DB_PASSWORD=your_password
+# YouTube API
+YOUTUBE_API_KEY=your_youtube_api_key
 ```
 
 ### 설치 및 실행
 
-> ⚠️ **주의**: 프로젝트가 현재 개발 중이므로 아래 명령어는 구현 완료 후 사용 가능합니다.
-
 ```bash
-# 저장소 클론
+# 1. 저장소 클론
 git clone https://github.com/yourusername/formom.git
 cd formom
 
-# Backend 실행
+# 2. 환경 변수 설정
+cp .env.example .env
+# .env 파일을 열어서 실제 API 키로 수정
+
+# 3. Backend 설정
+cd backend/src/main/resources
+cp application-local.yml.example application-local.yml
+# application-local.yml 파일을 열어서 실제 값으로 수정
+cd ../../..
+
+# 4. Docker로 MySQL 실행
+docker-compose up -d
+
+# 5. Backend 실행
 cd backend
 ./gradlew bootRun
 
-# Frontend 실행 (새 터미널)
+# 6. Frontend 실행 (새 터미널, Week 1 완료 후)
 cd frontend
 npm install
 npm run dev
-
-# Docker로 실행 (권장)
-docker-compose up -d
 ```
 
 ---

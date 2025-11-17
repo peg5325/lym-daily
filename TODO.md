@@ -19,17 +19,17 @@
 ## Week 1: 기본 구조 ⚙️
 
 ### Backend
-- [ ] Spring Boot 프로젝트 생성
-- [ ] 에이전트 패키지 구조 생성 (agent/collector, agent/ai, agent/curator 등)
-- [ ] MySQL 연결 설정
-- [ ] 데이터베이스 테이블 생성
-  - [ ] news 테이블
-  - [ ] media 테이블
-  - [ ] schedule 테이블
-- [ ] NewsCollectorAgent 구현
-  - [ ] 네이버 뉴스 API 연동
-  - [ ] 기본 크롤링 로직 구현 (하루치 뉴스 가져오기)
-  - [ ] 중복 뉴스 필터링
+- [x] Spring Boot 프로젝트 생성
+- [x] 에이전트 패키지 구조 생성 (agent/collector, agent/ai, agent/curator 등)
+- [x] MySQL 연결 설정
+- [x] 데이터베이스 테이블 생성
+  - [x] news 테이블
+  - [x] media 테이블
+  - [x] schedule 테이블
+- [x] NewsCollectorAgent 구현
+  - [x] 네이버 뉴스 API 연동
+  - [x] 기본 크롤링 로직 구현 (하루치 뉴스 가져오기)
+  - [x] 중복 뉴스 필터링
 
 ### Frontend
 - [ ] Vue 3 프로젝트 생성
@@ -183,16 +183,17 @@
 
 ## 📊 진행 상황 트래킹
 
-- **전체 진행률**: 10%
-- **현재 단계**: 문서화 완료, 개발 시작 준비
+- **전체 진행률**: 25%
+- **현재 단계**: Week 1 Backend 완료, Frontend 준비 중
 - **예상 완료일**: [시작일 + 4주]
 - **최근 완료**:
-  - 서브 에이전트 설계 (AGENTS.md, CLAUDE.md)
-  - Pull Request 워크플로우 설정
-  - README.md 작성 완료
+  - Spring Boot 프로젝트 구조 완성
+  - 데이터베이스 엔티티 및 리포지토리 구현
+  - NewsCollectorAgent 완성 (네이버 API 연동)
+  - 기본 REST API 구현
 
 ### 주차별 체크포인트
-- Week 1: [ ] 기본 구조 완성
+- Week 1: [x] Backend 기본 구조 완성 (Frontend 진행 예정)
 - Week 2: [ ] AI 요약 동작
 - Week 3: [ ] MVP 완성
 - Week 4: [ ] 배포 완료
