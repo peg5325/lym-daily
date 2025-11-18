@@ -32,13 +32,16 @@
   - [x] 중복 뉴스 필터링
 
 ### Frontend
-- [ ] Vue 3 프로젝트 생성
-- [ ] Tailwind CSS 설정
-- [ ] 메인 페이지 레이아웃 작성
-- [ ] 뉴스 카드 컴포넌트 작성
+- [x] Vue 3 프로젝트 생성
+- [x] Tailwind CSS 설정
+- [x] 메인 페이지 레이아웃 작성
+- [x] 뉴스 카드 컴포넌트 작성
+- [x] Backend API 연동
+- [x] 실제 뉴스 데이터 표시
+- [x] CORS 설정 추가
 
 ### Week 1 목표
-✅ 네이버에서 뉴스 가져와서 화면에 보여주기
+✅ 네이버에서 뉴스 가져와서 화면에 보여주기 **(완료!)**
 
 ---
 
@@ -183,17 +186,20 @@
 
 ## 📊 진행 상황 트래킹
 
-- **전체 진행률**: 25%
-- **현재 단계**: Week 1 Backend 완료, Frontend 준비 중
+- **전체 진행률**: 35%
+- **현재 단계**: Week 1 완료! Week 2 준비 중
 - **예상 완료일**: [시작일 + 4주]
 - **최근 완료**:
   - Spring Boot 프로젝트 구조 완성
   - 데이터베이스 엔티티 및 리포지토리 구현
   - NewsCollectorAgent 완성 (네이버 API 연동)
   - 기본 REST API 구현
+  - Vue 3 + Tailwind CSS 프론트엔드 구조 완성
+  - Backend-Frontend 연동 완료
+  - 실제 임영웅 뉴스 10개 화면 표시 성공
 
 ### 주차별 체크포인트
-- Week 1: [x] Backend 기본 구조 완성 (Frontend 진행 예정)
+- Week 1: [x] **완료!** Backend + Frontend 기본 구조, 뉴스 표시 기능 동작
 - Week 2: [ ] AI 요약 동작
 - Week 3: [ ] MVP 완성
 - Week 4: [ ] 배포 완료
