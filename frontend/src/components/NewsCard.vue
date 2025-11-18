@@ -2,9 +2,13 @@
 interface News {
   id: number
   title: string
+  content?: string
   summary: string
+  source?: string
   url: string
+  thumbnailUrl?: string
   publishedAt: string
+  importanceScore?: number
 }
 
 interface Props {
@@ -14,12 +18,12 @@ interface Props {
 
 const props = defineProps<Props>()
 
-// 시간 포맷팅 함수
-const formatTime = (dateString: string): string => {
+// 날짜 포맷팅 함수 (LocalDate: YYYY-MM-DD 형식)
+const formatDate = (dateString: string): string => {
   const date = new Date(dateString)
-  const hours = date.getHours()
-  const minutes = date.getMinutes()
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  return `${month}월 ${day}일`
 }
 
 // 외부 링크 열기
@@ -52,10 +56,10 @@ const openLink = (url: string) => {
 
         <!-- 요약 -->
         <p class="text-base md:text-lg text-gray-700 mb-3 leading-relaxed">
-          {{ news.summary }}
+          {{ news.summary || news.content?.substring(0, 100) + '...' }}
         </p>
 
-        <!-- 시간 -->
+        <!-- 발행일 -->
         <div class="flex items-center text-sm text-gray-500">
           <svg
             class="w-4 h-4 mr-1"
@@ -67,10 +71,10 @@ const openLink = (url: string) => {
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
             />
           </svg>
-          <span>{{ formatTime(news.publishedAt) }}</span>
+          <span>{{ formatDate(news.publishedAt) }}</span>
         </div>
       </div>
 
