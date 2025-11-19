@@ -33,9 +33,7 @@ const fetchDailySummary = async () => {
 
 // 미디어 가져오기 (오늘의 TOP 3)
 const fetchTopMedia = async () => {
-  // TODO: Backend에서 Media API 구현 후 연동
-  // 현재는 빈 배열 반환
-  mediaList.value = []
+  await fetchMedia('http://localhost:8080/api/media/top3')
 }
 
 // 이번 주 스케줄 가져오기
