@@ -1,6 +1,7 @@
 package com.formom.daily.controller;
 
 import com.formom.daily.dto.MediaDto;
+import com.formom.daily.dto.MediaGroupResponse;
 import com.formom.daily.service.MediaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,19 +26,19 @@ public class MediaController {
     private final MediaService mediaService;
 
     /**
-     * 최신 영상 TOP 3 조회
+     * Shorts와 일반 영상 각각 TOP 3씩 조회
      *
      * GET /api/media/top3
      *
-     * @return 조회수 기준 TOP 3 영상
+     * @return Shorts 3개 + 일반 영상 3개
      */
     @GetMapping("/top3")
-    public ResponseEntity<List<MediaDto>> getTop3Videos() {
-        log.info("GET /api/media/top3 - Fetching top 3 videos");
+    public ResponseEntity<MediaGroupResponse> getTop3Videos() {
+        log.info("GET /api/media/top3 - Fetching grouped videos (Shorts + Regular)");
 
-        List<MediaDto> top3 = mediaService.getTop3Videos();
+        MediaGroupResponse groupedVideos = mediaService.getGroupedVideos();
 
-        return ResponseEntity.ok(top3);
+        return ResponseEntity.ok(groupedVideos);
     }
 
     /**

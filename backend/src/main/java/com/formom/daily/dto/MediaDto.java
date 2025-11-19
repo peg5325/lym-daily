@@ -25,6 +25,7 @@ public class MediaDto {
     private Long viewCount;
     private Long likeCount;
     private LocalDate publishedAt;
+    private Media.VideoType videoType;
 
     /**
      * Entity -> DTO 변환
@@ -39,6 +40,7 @@ public class MediaDto {
                 .viewCount(media.getViewCount())
                 .likeCount(media.getLikeCount())
                 .publishedAt(media.getPublishedAt())
+                .videoType(media.getVideoType())
                 .build();
     }
 
@@ -54,6 +56,7 @@ public class MediaDto {
                 .viewCount(this.viewCount)
                 .likeCount(this.likeCount)
                 .publishedAt(this.publishedAt)
+                .videoType(this.videoType)
                 .build();
     }
 }

@@ -30,6 +30,12 @@ export interface Media {
   viewCount?: number
   likeCount?: number
   publishedAt: string
+  videoType?: 'SHORTS' | 'REGULAR'
+}
+
+export interface MediaGroupResponse {
+  shorts: Media[]
+  regularVideos: Media[]
 }
 
 export interface Schedule {

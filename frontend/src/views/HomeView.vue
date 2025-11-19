@@ -1,16 +1,28 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { onMounted, watch, ref } from 'vue'
 import NewsCard from '../components/NewsCard.vue'
 import MediaCard from '../components/MediaCard.vue'
 import ScheduleCard from '../components/ScheduleCard.vue'
 import { useDataFetch } from '../composables/useDataFetch'
 import { useDateNavigation } from '../composables/useDateNavigation'
-import type { DailySummary, Media, Schedule } from '../types'
+import type { DailySummary, Media, Schedule, MediaGroupResponse } from '../types'
 
 // DataFetchAgent (Composable) 사용
 const { data: summary, loading, error, fetchData } = useDataFetch<DailySummary>()
-const { data: mediaList, loading: mediaLoading, fetchData: fetchMedia } = useDataFetch<Media[]>()
+const { data: mediaGroup, loading: mediaLoading, fetchData: fetchMediaGroup } = useDataFetch<MediaGroupResponse>()
 const { data: scheduleList, loading: scheduleLoading, fetchData: fetchSchedules } = useDataFetch<Schedule[]>()
+
+// Shorts와 일반 영상 분리
+const shortsList = ref<Media[]>([])
+const regularVideosList = ref<Media[]>([])
+
+// mediaGroup이 변경될 때마다 분리
+watch(mediaGroup, (newGroup) => {
+  if (newGroup) {
+    shortsList.value = newGroup.shorts || []
+    regularVideosList.value = newGroup.regularVideos || []
+  }
+})
 
 // DateNavigationAgent (Composable) 사용
 const {
@@ -31,9 +43,9 @@ const fetchDailySummary = async () => {
   await fetchData(endpoint)
 }
 
-// 미디어 가져오기 (오늘의 TOP 3)
+// 미디어 가져오기 (Shorts + 일반 영상)
 const fetchTopMedia = async () => {
-  await fetchMedia('http://localhost:8080/api/media/top3')
+  await fetchMediaGroup('http://localhost:8080/api/media/top3')
 }
 
 // 이번 주 스케줄 가져오기
@@ -144,13 +156,26 @@ watch(formattedDateISO, () => {
           </div>
         </section>
 
-        <!-- 화제의 영상 섹션 -->
-        <section v-if="mediaList && mediaList.length > 0">
-          <h3 class="text-2xl font-bold text-gray-800 mb-4">🎬 화제의 영상</h3>
+        <!-- Shorts 섹션 -->
+        <section v-if="shortsList && shortsList.length > 0">
+          <h3 class="text-2xl font-bold text-gray-800 mb-4">🎬 Shorts</h3>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <MediaCard
-              v-for="media in mediaList"
+              v-for="media in shortsList"
+              :key="media.id"
+              :media="media"
+            />
+          </div>
+        </section>
+
+        <!-- 일반 영상 섹션 -->
+        <section v-if="regularVideosList && regularVideosList.length > 0">
+          <h3 class="text-2xl font-bold text-gray-800 mb-4">📺 화제의 영상</h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <MediaCard
+              v-for="media in regularVideosList"
               :key="media.id"
               :media="media"
             />

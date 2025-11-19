@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -204,27 +205,27 @@ public class MediaCollectorAgentImpl implements MediaCollectorAgent {
         String publishedAtStr = snippet.getString("publishedAt");
         LocalDate publishedAt = ZonedDateTime.parse(publishedAtStr).toLocalDate();
 
-        // 조회수 및 좋아요 수는 별도 API 호출 필요 (videos.list)
-        // 간단한 구현을 위해 일단 0으로 설정하고, 추후 개선 가능
-        Long viewCount = fetchVideoStatistics(videoId);
+        // 조회수 및 영상 길이는 별도 API 호출 필요 (videos.list)
+        VideoMetadata metadata = fetchVideoMetadata(videoId);
 
         return MediaDto.builder()
                 .type(Media.MediaType.VIDEO)
                 .title(title)
                 .url("https://www.youtube.com/watch?v=" + videoId)
                 .thumbnailUrl(thumbnailUrl)
-                .viewCount(viewCount)
+                .viewCount(metadata.viewCount)
                 .likeCount(0L)
                 .publishedAt(publishedAt)
+                .videoType(metadata.videoType)
                 .build();
     }
 
     /**
-     * YouTube 영상의 통계 정보 (조회수, 좋아요 수) 가져오기
+     * YouTube 영상의 메타데이터 (조회수, 영상 길이) 가져오기
      */
-    private Long fetchVideoStatistics(String videoId) {
+    private VideoMetadata fetchVideoMetadata(String videoId) {
         try {
-            String url = String.format("%s/videos?part=statistics&id=%s&key=%s",
+            String url = String.format("%s/videos?part=statistics,contentDetails&id=%s&key=%s",
                     YOUTUBE_API_BASE_URL, videoId, apiKey);
 
             String response = webClient.get()
@@ -234,22 +235,66 @@ public class MediaCollectorAgentImpl implements MediaCollectorAgent {
                     .block();
 
             if (response == null || response.isEmpty()) {
-                return 0L;
+                return new VideoMetadata(0L, Media.VideoType.REGULAR);
             }
 
             JSONObject jsonResponse = new JSONObject(response);
             JSONArray items = jsonResponse.optJSONArray("items");
 
             if (items == null || items.length() == 0) {
-                return 0L;
+                return new VideoMetadata(0L, Media.VideoType.REGULAR);
             }
 
-            JSONObject statistics = items.getJSONObject(0).getJSONObject("statistics");
-            return statistics.optLong("viewCount", 0L);
+            JSONObject item = items.getJSONObject(0);
+
+            // 조회수 가져오기
+            JSONObject statistics = item.getJSONObject("statistics");
+            Long viewCount = statistics.optLong("viewCount", 0L);
+
+            // 영상 길이 가져오기
+            JSONObject contentDetails = item.getJSONObject("contentDetails");
+            String durationStr = contentDetails.getString("duration");
+            Media.VideoType videoType = classifyVideoType(durationStr);
+
+            log.debug("Video {} - duration: {}, type: {}, viewCount: {}", videoId, durationStr, videoType, viewCount);
+
+            return new VideoMetadata(viewCount, videoType);
 
         } catch (Exception e) {
-            log.error("Failed to fetch video statistics for videoId: {}", videoId, e);
-            return 0L;
+            log.error("Failed to fetch video metadata for videoId: {}", videoId, e);
+            return new VideoMetadata(0L, Media.VideoType.REGULAR);
+        }
+    }
+
+    /**
+     * ISO 8601 duration 문자열을 파싱하여 Shorts/일반 영상 분류
+     *
+     * @param durationStr ISO 8601 형식 (예: "PT1M30S", "PT45S")
+     * @return VideoType (SHORTS: 60초 이하, REGULAR: 60초 초과)
+     */
+    private Media.VideoType classifyVideoType(String durationStr) {
+        try {
+            Duration duration = Duration.parse(durationStr);
+            long seconds = duration.getSeconds();
+
+            // 60초 이하면 Shorts, 초과하면 일반 영상
+            return seconds <= 60 ? Media.VideoType.SHORTS : Media.VideoType.REGULAR;
+        } catch (Exception e) {
+            log.error("Failed to parse duration: {}", durationStr, e);
+            return Media.VideoType.REGULAR;  // 기본값은 일반 영상
+        }
+    }
+
+    /**
+     * 영상 메타데이터를 담는 내부 클래스
+     */
+    private static class VideoMetadata {
+        final Long viewCount;
+        final Media.VideoType videoType;
+
+        VideoMetadata(Long viewCount, Media.VideoType videoType) {
+            this.viewCount = viewCount;
+            this.videoType = videoType;
         }
     }
 }

@@ -47,6 +47,10 @@ public class Media {
     @Column(name = "published_at", nullable = false)
     private LocalDate publishedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "video_type", length = 20)
+    private VideoType videoType;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -57,7 +61,7 @@ public class Media {
 
     @Builder
     public Media(MediaType type, String title, String url, String thumbnailUrl,
-                 Long viewCount, Long likeCount, LocalDate publishedAt) {
+                 Long viewCount, Long likeCount, LocalDate publishedAt, VideoType videoType) {
         this.type = type;
         this.title = title;
         this.url = url;
@@ -65,9 +69,15 @@ public class Media {
         this.viewCount = viewCount;
         this.likeCount = likeCount;
         this.publishedAt = publishedAt;
+        this.videoType = videoType;
     }
 
     public enum MediaType {
         VIDEO, PHOTO
+    }
+
+    public enum VideoType {
+        SHORTS,    // 60초 이하 영상
+        REGULAR    // 일반 영상
     }
 }
