@@ -26,11 +26,15 @@ public class MediaDto {
     private Long likeCount;
     private LocalDate publishedAt;
     private Media.VideoType videoType;
+    private Boolean isNew;  // 오늘 올라온 영상 여부
 
     /**
      * Entity -> DTO 변환
      */
     public static MediaDto from(Media media) {
+        LocalDate today = LocalDate.now();
+        boolean isNew = media.getPublishedAt() != null && media.getPublishedAt().equals(today);
+
         return MediaDto.builder()
                 .id(media.getId())
                 .type(media.getType())
@@ -41,6 +45,7 @@ public class MediaDto {
                 .likeCount(media.getLikeCount())
                 .publishedAt(media.getPublishedAt())
                 .videoType(media.getVideoType())
+                .isNew(isNew)
                 .build();
     }
 

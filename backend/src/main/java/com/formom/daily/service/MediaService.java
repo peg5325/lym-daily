@@ -68,43 +68,26 @@ public class MediaService {
     }
 
     /**
-     * Shorts와 일반 영상을 각각 TOP 3씩 조회
+     * 최신 영상 TOP 3 조회 (공식 채널 영상)
      */
     @Transactional(readOnly = true)
     public MediaGroupResponse getGroupedVideos() {
-        log.info("Getting grouped videos (Shorts and Regular)");
+        log.info("Getting top 3 latest videos from official channel");
 
-        // Shorts TOP 3 (조회수 순)
-        List<MediaDto> shorts = mediaRepository
-                .findTop10ByTypeAndVideoTypeOrderByPublishedAtDesc(Media.MediaType.VIDEO, Media.VideoType.SHORTS)
+        // 최신 영상 TOP 3 (발행일 순)
+        List<MediaDto> videos = mediaRepository
+                .findTop5ByTypeOrderByPublishedAtDesc(Media.MediaType.VIDEO)
                 .stream()
-                .sorted((m1, m2) -> {
-                    Long count1 = m1.getViewCount() != null ? m1.getViewCount() : 0L;
-                    Long count2 = m2.getViewCount() != null ? m2.getViewCount() : 0L;
-                    return count2.compareTo(count1);
-                })
                 .limit(3)
                 .map(MediaDto::from)
                 .collect(Collectors.toList());
 
-        // 일반 영상 TOP 3 (조회수 순)
-        List<MediaDto> regularVideos = mediaRepository
-                .findTop10ByTypeAndVideoTypeOrderByPublishedAtDesc(Media.MediaType.VIDEO, Media.VideoType.REGULAR)
-                .stream()
-                .sorted((m1, m2) -> {
-                    Long count1 = m1.getViewCount() != null ? m1.getViewCount() : 0L;
-                    Long count2 = m2.getViewCount() != null ? m2.getViewCount() : 0L;
-                    return count2.compareTo(count1);
-                })
-                .limit(3)
-                .map(MediaDto::from)
-                .collect(Collectors.toList());
+        log.info("Found {} videos", videos.size());
 
-        log.info("Found {} Shorts and {} Regular videos", shorts.size(), regularVideos.size());
-
+        // 모든 영상을 shorts에 담아서 반환 (프론트엔드 호환성 유지)
         return MediaGroupResponse.builder()
-                .shorts(shorts)
-                .regularVideos(regularVideos)
+                .shorts(videos)
+                .regularVideos(List.of())  // 빈 리스트
                 .build();
     }
 }

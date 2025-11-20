@@ -39,15 +39,28 @@ public class MediaCollectorAgentImpl implements MediaCollectorAgent {
     private static final String YOUTUBE_API_BASE_URL = "https://www.googleapis.com/youtube/v3";
     private static final String SEARCH_QUERY = "임영웅";
     private static final String[] OFFICIAL_CHANNEL_IDS = {
-            "UCWkzQdmU-1O0Ke-tt2pDmNw",  // 임영웅 공식 채널 (예시)
+            "UC3WZlO2Zl8NE1yIUgtwUtQw",  // 임영웅 공식 채널 (@LYW_official)
     };
 
     @Override
     public List<MediaDto> collectLatestVideos(int maxResults) {
-        log.info("===== MediaCollectorAgent: Collecting latest videos (maxResults: {}) =====", maxResults);
+        log.info("===== MediaCollectorAgent: Collecting from Official Channel Only (maxResults: {}) =====", maxResults);
+
+        // 공식 채널에서만 영상 수집
+        List<MediaDto> officialVideos = collectFromOfficialChannels(maxResults);
+
+        log.info("Total collected: {} videos from official channels", officialVideos.size());
+
+        return officialVideos;
+    }
+
+    /**
+     * 일반 검색으로 영상 수집 (키워드: "임영웅")
+     */
+    private List<MediaDto> collectFromGeneralSearch(int maxResults) {
+        log.info("Collecting from general search (keyword: {})", SEARCH_QUERY);
 
         try {
-            // YouTube API 호출
             String url = String.format("%s/search?part=snippet&q=%s&type=video&order=date&maxResults=%d&key=%s",
                     YOUTUBE_API_BASE_URL, SEARCH_QUERY, maxResults, apiKey);
 
@@ -57,48 +70,96 @@ public class MediaCollectorAgentImpl implements MediaCollectorAgent {
                     .bodyToMono(String.class)
                     .block();
 
-            if (response == null || response.isEmpty()) {
-                log.warn("YouTube API returned empty response");
-                return new ArrayList<>();
-            }
-
-            // JSON 파싱
-            JSONObject jsonResponse = new JSONObject(response);
-            JSONArray items = jsonResponse.optJSONArray("items");
-
-            if (items == null || items.length() == 0) {
-                log.warn("No videos found in YouTube API response");
-                return new ArrayList<>();
-            }
-
-            // MediaDto 리스트로 변환
-            List<MediaDto> mediaDtos = new ArrayList<>();
-            for (int i = 0; i < items.length(); i++) {
-                try {
-                    JSONObject item = items.getJSONObject(i);
-                    MediaDto mediaDto = parseYouTubeItem(item);
-
-                    // 중복 체크
-                    if (!mediaRepository.existsByUrl(mediaDto.getUrl())) {
-                        mediaDtos.add(mediaDto);
-                    } else {
-                        log.debug("Duplicate video skipped: {}", mediaDto.getUrl());
-                    }
-                } catch (Exception e) {
-                    log.error("Error parsing YouTube item: {}", e.getMessage());
-                }
-            }
-
-            log.info("Collected {} new videos from YouTube", mediaDtos.size());
-            return mediaDtos;
+            return parseYouTubeSearchResponse(response, "general");
 
         } catch (Exception e) {
-            log.error("Failed to collect YouTube videos: {}", e.getMessage(), e);
-
-            // Fallback: 빈 목록 반환
-            log.warn("Returning empty list due to API failure");
+            log.error("Failed to collect from general search: {}", e.getMessage(), e);
             return new ArrayList<>();
         }
+    }
+
+    /**
+     * 공식 채널에서 영상 수집
+     */
+    private List<MediaDto> collectFromOfficialChannels(int maxResults) {
+        log.info("Collecting from official channels: {}", String.join(", ", OFFICIAL_CHANNEL_IDS));
+
+        List<MediaDto> allChannelVideos = new ArrayList<>();
+
+        for (String channelId : OFFICIAL_CHANNEL_IDS) {
+            try {
+                String url = String.format("%s/search?part=snippet&channelId=%s&type=video&order=date&maxResults=%d&key=%s",
+                        YOUTUBE_API_BASE_URL, channelId, maxResults, apiKey);
+
+                String response = webClient.get()
+                        .uri(url)
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
+
+                List<MediaDto> channelVideos = parseYouTubeSearchResponse(response, "official-" + channelId);
+                allChannelVideos.addAll(channelVideos);
+
+                log.info("Collected {} videos from channel: {}", channelVideos.size(), channelId);
+
+            } catch (Exception e) {
+                log.error("Failed to collect from channel {}: {}", channelId, e.getMessage(), e);
+            }
+        }
+
+        return allChannelVideos;
+    }
+
+    /**
+     * YouTube Search API 응답 파싱 (공통 로직)
+     */
+    private List<MediaDto> parseYouTubeSearchResponse(String response, String source) {
+        if (response == null || response.isEmpty()) {
+            log.warn("YouTube API returned empty response for source: {}", source);
+            return new ArrayList<>();
+        }
+
+        JSONObject jsonResponse = new JSONObject(response);
+        JSONArray items = jsonResponse.optJSONArray("items");
+
+        if (items == null || items.length() == 0) {
+            log.warn("No videos found in YouTube API response for source: {}", source);
+            return new ArrayList<>();
+        }
+
+        List<MediaDto> mediaDtos = new ArrayList<>();
+        for (int i = 0; i < items.length(); i++) {
+            try {
+                JSONObject item = items.getJSONObject(i);
+                MediaDto mediaDto = parseYouTubeItem(item);
+
+                // DB 중복 체크
+                if (!mediaRepository.existsByUrl(mediaDto.getUrl())) {
+                    mediaDtos.add(mediaDto);
+                } else {
+                    log.debug("Video already exists in DB, skipping: {}", mediaDto.getUrl());
+                }
+            } catch (Exception e) {
+                log.error("Error parsing YouTube item from {}: {}", source, e.getMessage());
+            }
+        }
+
+        return mediaDtos;
+    }
+
+    /**
+     * URL 기준으로 중복 제거
+     */
+    private List<MediaDto> deduplicateVideos(List<MediaDto> videos) {
+        return videos.stream()
+                .collect(Collectors.toMap(
+                        MediaDto::getUrl,
+                        video -> video,
+                        (existing, replacement) -> existing  // Keep first occurrence
+                ))
+                .values()
+                .stream()
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -164,10 +225,10 @@ public class MediaCollectorAgentImpl implements MediaCollectorAgent {
 
     @Override
     public List<MediaDto> collectTodayTop3() {
-        log.info("===== MediaCollectorAgent: Collecting today's TOP 3 videos =====");
+        log.info("===== MediaCollectorAgent: Collecting today's TOP videos =====");
 
-        // 최신 영상 5개 수집
-        List<MediaDto> videos = collectLatestVideos(5);
+        // 최신 영상 10개 수집 (일반 검색 + 공식 채널)
+        List<MediaDto> videos = collectLatestVideos(10);
 
         if (videos.isEmpty()) {
             log.warn("No videos collected for today");
