@@ -1,0 +1,28 @@
+# Build outputs
+build/
+target/
+*.jar
+*.war
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Git
+.git/
+.gitignore
+
+# Gradle
+.gradle/
+
+# Application properties (use env vars instead)
+src/main/resources/application-local.yml
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

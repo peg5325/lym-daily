@@ -34,23 +34,26 @@ const {
   goToToday
 } = useDateNavigation()
 
+// API Base URL (환경 변수)
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+
 // 날짜별 요약 가져오기
 const fetchDailySummary = async () => {
   const endpoint = isToday.value
-    ? 'http://localhost:8080/api/today'
-    : `http://localhost:8080/api/date/${formattedDateISO.value}`
+    ? `${API_BASE_URL}/api/today`
+    : `${API_BASE_URL}/api/date/${formattedDateISO.value}`
 
   await fetchData(endpoint)
 }
 
 // 미디어 가져오기 (Shorts + 일반 영상)
 const fetchTopMedia = async () => {
-  await fetchMediaGroup('http://localhost:8080/api/media/top3')
+  await fetchMediaGroup(`${API_BASE_URL}/api/media/top3`)
 }
 
 // 이번 주 스케줄 가져오기
 const fetchWeekSchedules = async () => {
-  await fetchSchedules('http://localhost:8080/api/schedules/week')
+  await fetchSchedules(`${API_BASE_URL}/api/schedules/week`)
 }
 
 // 컴포넌트 마운트 시 실행

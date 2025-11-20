@@ -71,3 +71,13 @@ scheduler:
 cache:
   today-summary-ttl-minutes: 60
   past-data-ttl-hours: 24
+
+# Actuator (for Docker healthcheck)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: when-authorized
