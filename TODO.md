@@ -3,9 +3,9 @@
 ## 📋 개발 시작 전 준비사항
 
 ### API 키 발급
-- [ ] 네이버 API 키 발급 (뉴스 검색용)
+- [x] 네이버 API 키 발급 (뉴스 검색용)
 - [ ] YouTube API 키 발급 (영상 수집용)
-- [ ] OpenAI API 키 발급 (뉴스 요약용)
+- [x] OpenAI API 키 발급 (뉴스 요약용)
 
 ### 프로젝트 설정
 - [ ] GitHub 레포지토리 생성
@@ -48,32 +48,37 @@
 ## Week 2: AI 요약 🤖
 
 ### Backend
-- [ ] SummarizationAgent 구현
-  - [ ] OpenAI API 연동
-  - [ ] 요약 프롬프트 작성 (40자 이내, 한글)
-  - [ ] 중요도 점수 산정 로직
-  - [ ] 배치 처리 지원
-- [ ] ContentCuratorAgent 구현
-  - [ ] 중요도 기반 랭킹 알고리즘
-  - [ ] 상위 3개 뉴스 선정 로직
-  - [ ] 중복 콘텐츠 제거
-- [ ] SchedulerAgent 구현
-  - [ ] 스케줄러 설정 (매일 7시 자동 실행)
-  - [ ] 전체 데이터 수집 플로우 조율
-  - [ ] 에러 핸들링 및 재시도 로직
-- [ ] REST API 구현
-  - [ ] GET /api/today - 오늘의 요약
-  - [ ] GET /api/date/{date} - 특정 날짜 요약
+- [x] SummarizationAgent 구현
+  - [x] OpenAI API 연동
+  - [x] 요약 프롬프트 작성 (40자 이내, 한글)
+  - [x] 중요도 점수 산정 로직
+  - [x] 배치 처리 지원
+- [x] ContentCuratorAgent 구현
+  - [x] 중요도 기반 랭킹 알고리즘
+  - [x] 상위 3개 뉴스 선정 로직
+  - [x] 중복 콘텐츠 제거
+- [x] SchedulerAgent 구현
+  - [x] 스케줄러 설정 (매일 7시 자동 실행)
+  - [x] 전체 데이터 수집 플로우 조율
+  - [x] 에러 핸들링 및 재시도 로직
+- [x] REST API 구현
+  - [x] GET /api/today - 오늘의 요약
+  - [x] GET /api/date/{date} - 특정 날짜 요약
+  - [x] POST /api/admin/collect - 수동 뉴스 수집
 
 ### Frontend
-- [ ] DataFetchAgent (Composable) 구현
-  - [ ] API 연동 (Axios 설정)
-  - [ ] 로딩 상태 처리
-  - [ ] 에러 처리 및 사용자 친화적 메시지
-  - [ ] 자동 재시도 로직
+- [x] DataFetchAgent (Composable) 구현
+  - [x] API 연동 (useDataFetch)
+  - [x] 로딩 상태 처리
+  - [x] 에러 처리 및 사용자 친화적 메시지
+  - [x] 자동 재시도 로직
+- [x] HomeView 업데이트
+  - [x] TOP 3 뉴스 표시
+  - [x] 한글 날짜 포맷
+  - [x] AI 선정 안내 배너
 
 ### Week 2 목표
-✅ AI가 요약한 오늘의 뉴스 3개 보여주기
+✅ AI가 요약한 오늘의 뉴스 3개 보여주기 **(완료!)**
 
 ---
 
@@ -186,22 +191,23 @@
 
 ## 📊 진행 상황 트래킹
 
-- **전체 진행률**: 35%
-- **현재 단계**: Week 1 완료! Week 2 준비 중
+- **전체 진행률**: 50%
+- **현재 단계**: Week 2 완료! Week 3 준비 중
 - **예상 완료일**: [시작일 + 4주]
-- **최근 완료**:
-  - Spring Boot 프로젝트 구조 완성
-  - 데이터베이스 엔티티 및 리포지토리 구현
-  - NewsCollectorAgent 완성 (네이버 API 연동)
-  - 기본 REST API 구현
-  - Vue 3 + Tailwind CSS 프론트엔드 구조 완성
-  - Backend-Frontend 연동 완료
-  - 실제 임영웅 뉴스 10개 화면 표시 성공
+- **최근 완료** (Week 2):
+  - SummarizationAgent 구현 (OpenAI GPT-3.5 연동)
+  - ContentCuratorAgent 구현 (중요도 기반 랭킹 알고리즘)
+  - SchedulerAgent 구현 (매일 7시 자동 실행)
+  - REST API 구현 (/api/today, /api/date/{date}, /api/admin/collect)
+  - DataFetchAgent (Composable) 구현
+  - HomeView 업데이트 (TOP 3 AI 요약 뉴스 표시)
+  - 출처 신뢰도, 최신성 고려한 랭킹 알고리즘 완성
+  - Fallback 로직 구현 (OpenAI API 실패 시)
 
 ### 주차별 체크포인트
 - Week 1: [x] **완료!** Backend + Frontend 기본 구조, 뉴스 표시 기능 동작
-- Week 2: [ ] AI 요약 동작
-- Week 3: [ ] MVP 완성
+- Week 2: [x] **완료!** AI 요약 및 TOP 3 큐레이션 동작
+- Week 3: [ ] MVP 완성 (미디어, 스케줄 기능)
 - Week 4: [ ] 배포 완료
 
 ---

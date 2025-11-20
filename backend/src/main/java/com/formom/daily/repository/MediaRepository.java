@@ -30,6 +30,11 @@ public interface MediaRepository extends JpaRepository<Media, Long> {
     List<Media> findTop5ByTypeOrderByPublishedAtDesc(Media.MediaType type);
 
     /**
+     * 특정 타입 및 영상 타입의 최신 미디어 조회
+     */
+    List<Media> findTop10ByTypeAndVideoTypeOrderByPublishedAtDesc(Media.MediaType type, Media.VideoType videoType);
+
+    /**
      * URL 존재 여부 확인
      */
     boolean existsByUrl(String url);

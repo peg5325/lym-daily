@@ -1,11 +1,16 @@
 package com.formom.daily.agent.scheduler.impl;
 
 import com.formom.daily.agent.ai.SummarizationAgent;
+import com.formom.daily.agent.cache.CacheAgent;
+import com.formom.daily.agent.collector.MediaCollectorAgent;
 import com.formom.daily.agent.collector.NewsCollectorAgent;
 import com.formom.daily.agent.curator.ContentCuratorAgent;
 import com.formom.daily.agent.scheduler.SchedulerAgent;
+import com.formom.daily.dto.MediaDto;
 import com.formom.daily.dto.NewsDto;
+import com.formom.daily.entity.Media;
 import com.formom.daily.entity.News;
+import com.formom.daily.repository.MediaRepository;
 import com.formom.daily.repository.NewsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +33,12 @@ import java.util.stream.Collectors;
 public class SchedulerAgentImpl implements SchedulerAgent {
 
     private final NewsCollectorAgent newsCollectorAgent;
+    private final MediaCollectorAgent mediaCollectorAgent;
     private final SummarizationAgent summarizationAgent;
     private final ContentCuratorAgent contentCuratorAgent;
+    private final CacheAgent cacheAgent;
     private final NewsRepository newsRepository;
+    private final MediaRepository mediaRepository;
 
     /**
      * 매일 오전 7시 자동 실행
@@ -62,11 +70,12 @@ public class SchedulerAgentImpl implements SchedulerAgent {
     }
 
     /**
-     * 뉴스 수집 플로우 실행
+     * 뉴스 및 미디어 수집 플로우 실행
      * 1. NewsCollectorAgent: 뉴스 수집
-     * 2. SummarizationAgent: AI 요약 및 중요도 점수 산정
-     * 3. ContentCuratorAgent: TOP 3 선정
-     * 4. DB 저장
+     * 2. MediaCollectorAgent: YouTube 영상 수집
+     * 3. SummarizationAgent: AI 요약 및 중요도 점수 산정
+     * 4. ContentCuratorAgent: TOP 3 선정
+     * 5. DB 저장
      */
     @Transactional
     protected void executeNewsCollectionFlow(LocalDate date) {
@@ -77,36 +86,59 @@ public class SchedulerAgentImpl implements SchedulerAgent {
 
             if (collectedNews.isEmpty()) {
                 log.warn("No news collected for date: {}", date);
-                return;
+            } else {
+                log.info("Collected {} news articles", collectedNews.size());
+
+                // Step 3: AI 요약 및 중요도 점수 산정
+                log.info("Step 3: Summarizing news with AI");
+                List<NewsDto> summarizedNews = summarizationAgent.summarizeNewsBatch(collectedNews);
+                log.info("Successfully summarized {} news articles", summarizedNews.size());
+
+                // Step 4: TOP 3 선정
+                log.info("Step 4: Selecting TOP 3 news");
+                List<NewsDto> top3News = contentCuratorAgent.selectTodayTop3(summarizedNews);
+                log.info("Selected TOP 3 news:");
+                top3News.forEach(news ->
+                        log.info("  - [Score: {}] {}", news.getImportanceScore(), news.getTitle())
+                );
+
+                // Step 6: 모든 뉴스 DB 저장
+                log.info("Step 6: Saving all news to database");
+                List<News> newsEntities = summarizedNews.stream()
+                        .map(NewsDto::toEntity)
+                        .collect(Collectors.toList());
+
+                newsRepository.saveAll(newsEntities);
+                log.info("Successfully saved {} news articles to database", newsEntities.size());
             }
 
-            log.info("Collected {} news articles", collectedNews.size());
+            // Step 2: 미디어 수집 (YouTube 영상)
+            log.info("Step 2: Collecting videos from YouTube API");
+            List<MediaDto> collectedVideos = mediaCollectorAgent.collectTodayTop3();
 
-            // Step 2: AI 요약 및 중요도 점수 산정
-            log.info("Step 2: Summarizing news with AI");
-            List<NewsDto> summarizedNews = summarizationAgent.summarizeNewsBatch(collectedNews);
-            log.info("Successfully summarized {} news articles", summarizedNews.size());
+            if (collectedVideos.isEmpty()) {
+                log.warn("No videos collected for date: {}", date);
+            } else {
+                log.info("Collected {} videos", collectedVideos.size());
 
-            // Step 3: TOP 3 선정
-            log.info("Step 3: Selecting TOP 3 news");
-            List<NewsDto> top3News = contentCuratorAgent.selectTodayTop3(summarizedNews);
-            log.info("Selected TOP 3 news:");
-            top3News.forEach(news ->
-                    log.info("  - [Score: {}] {}", news.getImportanceScore(), news.getTitle())
-            );
+                // Step 5: 미디어 DB 저장
+                log.info("Step 5: Saving all media to database");
+                List<Media> mediaEntities = collectedVideos.stream()
+                        .map(MediaDto::toEntity)
+                        .collect(Collectors.toList());
 
-            // Step 4: 모든 뉴스 DB 저장 (TOP 3만이 아니라 전체 저장)
-            log.info("Step 4: Saving all news to database");
-            List<News> newsEntities = summarizedNews.stream()
-                    .map(NewsDto::toEntity)
-                    .collect(Collectors.toList());
+                mediaRepository.saveAll(mediaEntities);
+                log.info("Successfully saved {} videos to database", mediaEntities.size());
+            }
 
-            newsRepository.saveAll(newsEntities);
-            log.info("Successfully saved {} news articles to database", newsEntities.size());
+            // Step 7: 캐시 무효화
+            log.info("Step 7: Invalidating all caches");
+            cacheAgent.evictAllCaches();
+            log.info("All caches have been invalidated");
 
         } catch (Exception e) {
-            log.error("Failed to execute news collection flow", e);
-            throw new RuntimeException("News collection flow failed", e);
+            log.error("Failed to execute news and media collection flow", e);
+            throw new RuntimeException("News and media collection flow failed", e);
         }
     }
 }

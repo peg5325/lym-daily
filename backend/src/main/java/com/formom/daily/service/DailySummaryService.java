@@ -1,12 +1,14 @@
 package com.formom.daily.service;
 
 import com.formom.daily.agent.curator.ContentCuratorAgent;
+import com.formom.daily.config.CacheConfig;
 import com.formom.daily.dto.DailySummaryDto;
 import com.formom.daily.dto.NewsDto;
 import com.formom.daily.entity.News;
 import com.formom.daily.repository.NewsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +41,10 @@ public class DailySummaryService {
 
     /**
      * 특정 날짜의 요약 조회
+     *
+     * 캐싱: 날짜별로 캐싱되며, 새로운 데이터가 수집되면 무효화됩니다.
      */
+    @Cacheable(value = CacheConfig.DAILY_SUMMARY_CACHE, key = "#date")
     @Transactional(readOnly = true)
     public DailySummaryDto getDailySummary(LocalDate date) {
         log.info("Getting daily summary for date: {}", date);
