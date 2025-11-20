@@ -4,7 +4,7 @@
 
 ### API 키 발급
 - [x] 네이버 API 키 발급 (뉴스 검색용)
-- [ ] YouTube API 키 발급 (영상 수집용)
+- [x] YouTube API 키 발급 (영상 수집용)
 - [x] OpenAI API 키 발급 (뉴스 요약용)
 
 ### 프로젝트 설정
@@ -85,33 +85,42 @@
 ## Week 3: 미디어 & 스케줄 📸📅
 
 ### Backend
-- [ ] MediaCollectorAgent 구현
-  - [ ] YouTube API 연동
-  - [ ] 최신 영상 3개 가져오기
-  - [ ] 썸네일 및 메타데이터 저장
-  - [ ] 공식 채널 우선순위 처리
-- [ ] CacheAgent 구현
-  - [ ] 오늘의 요약 데이터 캐싱 (1시간)
-  - [ ] API 응답 캐싱
-  - [ ] 캐시 무효화 전략
-- [ ] 스케줄 CRUD API 구현
-  - [ ] POST /api/schedules - 스케줄 등록
-  - [ ] GET /api/schedules/week - 이번 주 스케줄 조회
-  - [ ] PUT /api/schedules/{id} - 스케줄 수정
-  - [ ] DELETE /api/schedules/{id} - 스케줄 삭제
+- [x] MediaCollectorAgent 구현
+  - [x] YouTube API 연동
+  - [x] 최신 영상 3개 가져오기
+  - [x] 썸네일 및 메타데이터 저장
+  - [x] 공식 채널 우선순위 처리
+  - [x] NEW 배지 기능 (오늘 올라온 영상 표시)
+  - [x] VideoType 분류 (SHORTS vs REGULAR)
+- [x] CacheAgent 구현
+  - [x] 오늘의 요약 데이터 캐싱 (1시간)
+  - [x] API 응답 캐싱
+  - [x] 캐시 무효화 전략
+- [x] 스케줄 CRUD API 구현
+  - [x] POST /api/schedules - 스케줄 등록
+  - [x] GET /api/schedules/week - 이번 주 스케줄 조회
+  - [x] PUT /api/schedules/{id} - 스케줄 수정
+  - [x] DELETE /api/schedules/{id} - 스케줄 삭제
+- [x] Media API 구현
+  - [x] GET /api/media/top3 - 최신 영상 TOP 3
 
 ### Frontend
-- [ ] DateNavigationAgent (Composable) 구현
-  - [ ] 어제/오늘 전환 버튼
-  - [ ] 날짜 포맷팅 (한글)
-  - [ ] URL 파라미터 동기화
-- [ ] 화제의 사진 섹션 구현
-- [ ] 스케줄 섹션 구현
-- [ ] 반응형 디자인 적용 (모바일 최적화)
-- [ ] UI/UX 개선 (엄마 사용성 중심)
+- [x] DateNavigationAgent (Composable) 구현
+  - [x] 어제/오늘 전환 버튼
+  - [x] 날짜 포맷팅 (한글)
+  - [x] URL 파라미터 동기화
+- [x] YouTube 영상 섹션 구현
+  - [x] MediaCard 컴포넌트
+  - [x] NEW 배지 UI
+  - [x] 공식 채널 링크
+- [x] 스케줄 섹션 구현
+  - [x] ScheduleCard 컴포넌트
+  - [x] 이번 주 일정 표시
+- [x] 반응형 디자인 적용 (모바일 최적화)
+- [x] UI/UX 개선 (엄마 사용성 중심)
 
 ### Week 3 목표
-✅ 완성된 MVP (모든 기능 동작)
+✅ 완성된 MVP (모든 기능 동작) **(완료!)**
 
 ---
 
@@ -191,23 +200,23 @@
 
 ## 📊 진행 상황 트래킹
 
-- **전체 진행률**: 50%
-- **현재 단계**: Week 2 완료! Week 3 준비 중
+- **전체 진행률**: 75%
+- **현재 단계**: Week 3 완료! Week 4 배포 준비 중
 - **예상 완료일**: [시작일 + 4주]
-- **최근 완료** (Week 2):
-  - SummarizationAgent 구현 (OpenAI GPT-3.5 연동)
-  - ContentCuratorAgent 구현 (중요도 기반 랭킹 알고리즘)
-  - SchedulerAgent 구현 (매일 7시 자동 실행)
-  - REST API 구현 (/api/today, /api/date/{date}, /api/admin/collect)
-  - DataFetchAgent (Composable) 구현
-  - HomeView 업데이트 (TOP 3 AI 요약 뉴스 표시)
-  - 출처 신뢰도, 최신성 고려한 랭킹 알고리즘 완성
-  - Fallback 로직 구현 (OpenAI API 실패 시)
+- **최근 완료** (Week 3):
+  - MediaCollectorAgent 구현 (YouTube API 연동, 공식 채널 우선)
+  - CacheAgent 구현 (1시간 캐싱 전략)
+  - Schedule CRUD API 구현 (스케줄 관리)
+  - DateNavigationAgent (Composable) 구현
+  - YouTube 영상 섹션 구현 (NEW 배지, 공식 채널 링크)
+  - ScheduleCard 컴포넌트 구현
+  - 반응형 디자인 및 모바일 최적화
+  - MVP 핵심 기능 완성
 
 ### 주차별 체크포인트
 - Week 1: [x] **완료!** Backend + Frontend 기본 구조, 뉴스 표시 기능 동작
 - Week 2: [x] **완료!** AI 요약 및 TOP 3 큐레이션 동작
-- Week 3: [ ] MVP 완성 (미디어, 스케줄 기능)
+- Week 3: [x] **완료!** MVP 완성 (미디어, 스케줄 기능)
 - Week 4: [ ] 배포 완료
 
 ---
