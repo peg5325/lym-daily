@@ -156,26 +156,26 @@ watch(formattedDateISO, () => {
           </div>
         </section>
 
-        <!-- Shorts 섹션 -->
+        <!-- Youtube 섹션 -->
         <section v-if="shortsList && shortsList.length > 0">
-          <h3 class="text-2xl font-bold text-gray-800 mb-4">🎬 Shorts</h3>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-2xl font-bold text-gray-800">📺 Youtube</h3>
+            <a
+              href="https://www.youtube.com/@LYW_official"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-sm text-blue-600 hover:text-blue-700 underline flex items-center gap-1"
+            >
+              임영웅 공식 유튜브 채널 바로가기
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <MediaCard
               v-for="media in shortsList"
-              :key="media.id"
-              :media="media"
-            />
-          </div>
-        </section>
-
-        <!-- 일반 영상 섹션 -->
-        <section v-if="regularVideosList && regularVideosList.length > 0">
-          <h3 class="text-2xl font-bold text-gray-800 mb-4">📺 화제의 영상</h3>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <MediaCard
-              v-for="media in regularVideosList"
               :key="media.id"
               :media="media"
             />

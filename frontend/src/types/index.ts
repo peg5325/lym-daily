@@ -31,6 +31,7 @@ export interface Media {
   likeCount?: number
   publishedAt: string
   videoType?: 'SHORTS' | 'REGULAR'
+  isNew?: boolean  // 오늘 올라온 영상 여부
 }
 
 export interface MediaGroupResponse {

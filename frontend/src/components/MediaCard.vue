@@ -28,6 +28,15 @@ const formatViews = (views?: number): string => {
         :alt="media.title"
         class="w-full h-full object-cover"
       />
+
+      <!-- NEW badge (오늘 올라온 영상) -->
+      <div
+        v-if="media.isNew"
+        class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded"
+      >
+        NEW!!
+      </div>
+
       <!-- Play button overlay for videos -->
       <div
         v-if="media.type === 'VIDEO'"
