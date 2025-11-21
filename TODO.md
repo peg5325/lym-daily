@@ -132,11 +132,11 @@
 - [ ] Nginx 설치 및 설정
 
 ### 배포
-- [ ] Backend Dockerfile 작성
-- [ ] Frontend Dockerfile 작성
-- [ ] Docker Compose 설정
-- [ ] 빌드 및 배포 스크립트 작성
-- [ ] 환경 변수 설정 (.env)
+- [x] Backend Dockerfile 작성
+- [x] Frontend Dockerfile 작성
+- [x] Docker Compose 설정
+- [x] 로컬 Docker Compose 테스트
+- [x] 환경 변수 설정 (.env)
 
 ### 보안 & 도메인
 - [ ] HTTPS 설정 (Let's Encrypt)
@@ -165,7 +165,7 @@
   - [ ] 실사용 스크린샷 (구현 후 추가)
   - [x] 설치 및 실행 방법
 - [ ] API 문서 작성
-- [ ] 배포 가이드 작성
+- [x] 배포 가이드 작성 (DOCKER.md)
 - [ ] 에이전트별 테스트 문서 작성
 
 ### 피드백 반영
@@ -200,18 +200,16 @@
 
 ## 📊 진행 상황 트래킹
 
-- **전체 진행률**: 75%
-- **현재 단계**: Week 3 완료! Week 4 배포 준비 중
+- **전체 진행률**: 80%
+- **현재 단계**: Week 4 배포 진행 중 - 로컬 Docker 테스트 완료, AWS 배포 대기
 - **예상 완료일**: [시작일 + 4주]
-- **최근 완료** (Week 3):
-  - MediaCollectorAgent 구현 (YouTube API 연동, 공식 채널 우선)
-  - CacheAgent 구현 (1시간 캐싱 전략)
-  - Schedule CRUD API 구현 (스케줄 관리)
-  - DateNavigationAgent (Composable) 구현
-  - YouTube 영상 섹션 구현 (NEW 배지, 공식 채널 링크)
-  - ScheduleCard 컴포넌트 구현
-  - 반응형 디자인 및 모바일 최적화
-  - MVP 핵심 기능 완성
+- **최근 완료** (Docker 구축):
+  - Backend Dockerfile 작성 (Multi-stage build, Java 17)
+  - Frontend Dockerfile 작성 (Multi-stage build, Nginx)
+  - Docker Compose 설정 (MySQL + Backend + Frontend)
+  - 환경 변수 템플릿 생성 (.env.example)
+  - DOCKER.md 배포 가이드 작성
+  - 로컬 Docker Compose 전체 스택 테스트 완료
 
 ### 주차별 체크포인트
 - Week 1: [x] **완료!** Backend + Frontend 기본 구조, 뉴스 표시 기능 동작
