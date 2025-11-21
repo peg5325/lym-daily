@@ -12,8 +12,8 @@ RUN npm ci --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Build argument for API URL
-ARG VITE_API_BASE_URL
+# Build argument for API URL (기본값: 빈 문자열 - Nginx 프록시 사용)
+ARG VITE_API_BASE_URL=""
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 
 # Build application
