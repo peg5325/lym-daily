@@ -34,8 +34,10 @@ const {
   goToToday
 } = useDateNavigation()
 
-// API Base URL (환경 변수)
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+// API Base URL
+// 프로덕션(Docker) 환경: 빈 문자열 - Nginx가 /api를 backend로 프록시
+// 개발 환경: http://localhost:8080
+const API_BASE_URL = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080')
 
 // 날짜별 요약 가져오기
 const fetchDailySummary = async () => {

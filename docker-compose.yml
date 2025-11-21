@@ -67,7 +67,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8080}
+        # 빈 문자열로 설정 (Nginx가 /api를 backend로 프록시)
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-}
     container_name: formom-frontend
     restart: unless-stopped
     ports:
