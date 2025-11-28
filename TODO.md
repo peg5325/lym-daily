@@ -119,6 +119,15 @@
 - [x] 반응형 디자인 적용 (모바일 최적화)
 - [x] UI/UX 개선 (엄마 사용성 중심)
 
+### Week 3 추가 개선사항
+- [x] MediaCollectorAgent 리팩토링
+  - [x] 조회수 정렬 로직 제거 (모든 신규 영상 저장)
+  - [x] 영상 표시 개수 확대 (3개 → 9개)
+  - [x] 불필요한 메서드 제거 (코드 정리)
+- [x] MediaCard 개선
+  - [x] 상대 날짜 표시 추가 ("오늘", "어제", "N일 전")
+  - [x] 사용자 경험 향상
+
 ### Week 3 목표
 ✅ 완성된 MVP (모든 기능 동작) **(완료!)**
 
@@ -200,10 +209,13 @@
 
 ## 📊 진행 상황 트래킹
 
-- **전체 진행률**: 80%
+- **전체 진행률**: 85%
 - **현재 단계**: Week 4 배포 진행 중 - 로컬 Docker 테스트 완료, AWS 배포 대기
 - **예상 완료일**: [시작일 + 4주]
-- **최근 완료** (Docker 구축):
+- **최근 완료** (미디어 수집 개선 + Docker 구축):
+  - MediaCollectorAgent 리팩토링 (조회수 정렬 제거, 9개 영상 표시)
+  - MediaCard 상대 날짜 표시 추가
+  - 불필요한 코드 제거 (getTop3Videos 등)
   - Backend Dockerfile 작성 (Multi-stage build, Java 17)
   - Frontend Dockerfile 작성 (Multi-stage build, Nginx)
   - Docker Compose 설정 (MySQL + Backend + Frontend)

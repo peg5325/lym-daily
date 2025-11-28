@@ -42,19 +42,25 @@ public interface NewsCollectorAgent {
 - 조회수, 좋아요 수 등 메타데이터 수집
 - 썸네일 URL 추출
 - 공식 채널 우선순위 부여
+- 중복 확인 후 신규 영상만 저장
 
 **인터페이스**:
 ```java
 public interface MediaCollectorAgent {
     List<MediaDto> collectLatestVideos(int count);
-    List<MediaDto> collectTrendingMedia(LocalDate date);
+    List<MediaDto> collectVideosByDate(LocalDate date, int maxResults);
 }
 ```
 
 **설정값**:
 - `youtube.api.key`: YouTube API 키
 - `youtube.channel.official`: 공식 채널 ID 목록
-- `youtube.fetch.count`: 수집할 영상 개수 (기본값: 5)
+- `youtube.fetch.count`: 수집할 영상 개수 (기본값: 9)
+
+**수집 전략**:
+- 최신 영상 10개를 API에서 가져온 후 DB 중복 확인
+- 중복되지 않은 신규 영상만 저장
+- 최대 9개 영상을 Frontend에 표시
 
 ---
 
@@ -230,7 +236,7 @@ export function useDataFetch() {
     ↓
 [NewsCollectorAgent] → 네이버 API → 10개 뉴스
     ↓
-[MediaCollectorAgent] → YouTube API → 5개 영상
+[MediaCollectorAgent] → YouTube API → 최대 9개 영상 (신규만)
     ↓
 [SummarizationAgent] → OpenAI API → 요약 생성
     ↓
@@ -240,7 +246,7 @@ export function useDataFetch() {
     ↓
 [CacheAgent] → 캐시 무효화
     ↓
-[Frontend] → API 조회 → 사용자에게 표시
+[Frontend] → API 조회 → 사용자에게 표시 (9개 영상, 날짜 표시)
 ```
 
 ---
