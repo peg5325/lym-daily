@@ -28,11 +28,4 @@ public interface MediaCollectorAgent {
      * @return 수집된 영상 목록
      */
     List<MediaDto> collectVideosByDate(LocalDate date, int maxResults);
-
-    /**
-     * 오늘의 YouTube 영상 TOP 3 수집
-     *
-     * @return 수집된 영상 목록 (최대 3개)
-     */
-    List<MediaDto> collectTodayTop3();
 }

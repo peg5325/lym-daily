@@ -114,7 +114,7 @@ public class SchedulerAgentImpl implements SchedulerAgent {
 
             // Step 2: 미디어 수집 (YouTube 영상)
             log.info("Step 2: Collecting videos from YouTube API");
-            List<MediaDto> collectedVideos = mediaCollectorAgent.collectTodayTop3();
+            List<MediaDto> collectedVideos = mediaCollectorAgent.collectLatestVideos(10);
 
             if (collectedVideos.isEmpty()) {
                 log.warn("No videos collected for date: {}", date);

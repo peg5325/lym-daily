@@ -54,29 +54,6 @@ public class MediaCollectorAgentImpl implements MediaCollectorAgent {
         return officialVideos;
     }
 
-    /**
-     * 일반 검색으로 영상 수집 (키워드: "임영웅")
-     */
-    private List<MediaDto> collectFromGeneralSearch(int maxResults) {
-        log.info("Collecting from general search (keyword: {})", SEARCH_QUERY);
-
-        try {
-            String url = String.format("%s/search?part=snippet&q=%s&type=video&order=date&maxResults=%d&key=%s",
-                    YOUTUBE_API_BASE_URL, SEARCH_QUERY, maxResults, apiKey);
-
-            String response = webClient.get()
-                    .uri(url)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
-
-            return parseYouTubeSearchResponse(response, "general");
-
-        } catch (Exception e) {
-            log.error("Failed to collect from general search: {}", e.getMessage(), e);
-            return new ArrayList<>();
-        }
-    }
 
     /**
      * 공식 채널에서 영상 수집
@@ -147,21 +124,6 @@ public class MediaCollectorAgentImpl implements MediaCollectorAgent {
         return mediaDtos;
     }
 
-    /**
-     * URL 기준으로 중복 제거
-     */
-    private List<MediaDto> deduplicateVideos(List<MediaDto> videos) {
-        return videos.stream()
-                .collect(Collectors.toMap(
-                        MediaDto::getUrl,
-                        video -> video,
-                        (existing, replacement) -> existing  // Keep first occurrence
-                ))
-                .values()
-                .stream()
-                .collect(Collectors.toList());
-    }
-
     @Override
     public List<MediaDto> collectVideosByDate(LocalDate date, int maxResults) {
         log.info("===== MediaCollectorAgent: Collecting videos by date ({}) =====", date);
@@ -223,31 +185,6 @@ public class MediaCollectorAgentImpl implements MediaCollectorAgent {
         }
     }
 
-    @Override
-    public List<MediaDto> collectTodayTop3() {
-        log.info("===== MediaCollectorAgent: Collecting today's TOP videos =====");
-
-        // 최신 영상 10개 수집 (일반 검색 + 공식 채널)
-        List<MediaDto> videos = collectLatestVideos(10);
-
-        if (videos.isEmpty()) {
-            log.warn("No videos collected for today");
-            return new ArrayList<>();
-        }
-
-        // 조회수 기준으로 정렬 후 상위 3개 선택
-        List<MediaDto> top3 = videos.stream()
-                .sorted((v1, v2) -> {
-                    Long count1 = v1.getViewCount() != null ? v1.getViewCount() : 0L;
-                    Long count2 = v2.getViewCount() != null ? v2.getViewCount() : 0L;
-                    return count2.compareTo(count1);
-                })
-                .limit(3)
-                .collect(Collectors.toList());
-
-        log.info("Selected TOP 3 videos from {} candidates", videos.size());
-        return top3;
-    }
 
     /**
      * YouTube API 응답 아이템을 MediaDto로 변환
