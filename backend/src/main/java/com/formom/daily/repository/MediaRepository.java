@@ -25,9 +25,14 @@ public interface MediaRepository extends JpaRepository<Media, Long> {
     List<Media> findByPublishedAtOrderByViewCountDesc(LocalDate publishedAt);
 
     /**
-     * 특정 타입의 최신 미디어 조회
+     * 특정 타입의 최신 미디어 조회 (5개)
      */
     List<Media> findTop5ByTypeOrderByPublishedAtDesc(Media.MediaType type);
+
+    /**
+     * 특정 타입의 최신 미디어 조회 (10개)
+     */
+    List<Media> findTop9ByTypeOrderByPublishedAtDesc(Media.MediaType type);
 
     /**
      * 특정 타입 및 영상 타입의 최신 미디어 조회

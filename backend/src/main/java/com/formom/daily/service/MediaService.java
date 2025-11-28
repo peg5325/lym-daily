@@ -68,17 +68,16 @@ public class MediaService {
     }
 
     /**
-     * 최신 영상 TOP 3 조회 (공식 채널 영상)
+     * 최신 영상 조회 (공식 채널 영상, 최대 10개)
      */
     @Transactional(readOnly = true)
     public MediaGroupResponse getGroupedVideos() {
-        log.info("Getting top 3 latest videos from official channel");
+        log.info("Getting latest videos from official channel");
 
-        // 최신 영상 TOP 3 (발행일 순)
+        // 최신 영상 최대 10개 (발행일 순)
         List<MediaDto> videos = mediaRepository
-                .findTop5ByTypeOrderByPublishedAtDesc(Media.MediaType.VIDEO)
+                .findTop9ByTypeOrderByPublishedAtDesc(Media.MediaType.VIDEO)
                 .stream()
-                .limit(3)
                 .map(MediaDto::from)
                 .collect(Collectors.toList());
 
